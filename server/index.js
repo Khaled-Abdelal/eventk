@@ -25,6 +25,7 @@ mongoose.set('useFindAndModify', false);
 
 // ----------------Routes----------//
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/user', require('./routes/userRoutes'));
 
 // --------------ServerStart---------//
 
