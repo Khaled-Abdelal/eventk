@@ -5,7 +5,7 @@ import GoogleMap from '../src/Map';
 export default function Index() {
   return (
     <Layout>
-      <GoogleMap></GoogleMap>
+      <GoogleMap />
     </Layout>
   );
 }

@@ -1,28 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GoogleMapReact from 'google-map-react';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import usePosition from '../hooks/usePosition';
-
-const CameraMarker = () => (
-  <SvgIcon fontSize="large">
-    <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-1l1.25-2.75L16 13l-2.75-1.25L12 9l-1.25 2.75L8 13l2.75 1.25z" />
-  </SvgIcon>
-);
+// import usePosition from '../hooks/usePosition';
+import Modal from './Modal';
+import useModal from '../hooks/useModal';
+import EventForm from './EventForm';
+import ClickMarker from './ClickMarker';
 
 function Map() {
-  const { latitude, longitude, error } = usePosition();
+  // const { latitude, longitude, error } = usePosition();
+  const { open, handleClose, handleOpen } = useModal();
+  // const [mapObjects, setMapObjects] = useState({});
+  const [show, setShow] = useState(false);
+  const [coords, setCoords] = useState({ lat: null, lng: null });
+
+  // const handleApiLoaded = (map, maps) => {
+  //   // use map and maps objects
+  //   setMapObjects({ map, maps });
+  // };
+
+  const mapClicked = ({ lat, lng }) => {
+    setCoords({ lat, lng });
+    setShow(true);
+  };
   return (
-    <div style={{ height: '100vh', width: '100%' }}>
+    <div style={{ height: '100%', width: '100%' }}>
       <GoogleMapReact
         // bootstrapURLKeys={{ key: '/* YOUR KEY HERE */' }}
+        onClick={mapClicked}
         defaultCenter={{
-          lat: latitude,
-          lng: longitude,
+          lat: 31.205753,
+          lng: 29.924526,
         }}
-        defaultZoom={13}
+        defaultZoom={6}
+        yesIWantToUseGoogleMapApiInternals
+        // onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+        style={{ cursor: 'pointer' }}
       >
-        <CameraMarker lat={latitude} lng={longitude} />
+        <ClickMarker show={show} lat={coords.lat} lng={coords.lng} onClick={handleOpen} />
       </GoogleMapReact>
+      <Modal handleClose={handleClose} handleOpen={handleOpen} open={open}>
+        <EventForm />
+      </Modal>
     </div>
   );
 }
