@@ -1,12 +1,16 @@
 const express = require('express');
+const http = require('http');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
 
+const app = express();
+const server = http.Server(app);
+const io = require('socket.io')(server);
+
 require('dotenv').config();
 require('./config/passport');
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ------------ MiddleWares----------//
@@ -26,9 +30,12 @@ mongoose.set('useFindAndModify', false);
 // ----------------Routes----------//
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/user', require('./routes/userRoutes'));
+app.use('/api/event', require('./routes/eventRoutes'));
 
+// ----------------Socketio----------//
+require('./socketio/socketio')(io);
 // --------------ServerStart---------//
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`server up port ${PORT}`);
 });

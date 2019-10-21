@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 
-function ClickMarker({ show, onClick }) {
+function ClickMarker({ setShow, show, onClick }) {
+  useEffect(() => {
+    const handleEsc = event => {
+      if (event.keyCode === 27) {
+        setShow(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [setShow]);
   return (
     <React.Fragment>
-      <div className="pin1" />
-      {/* Below is info window component */}
       {show && (
-        <div className="infoWindow">
-          <Button size="small" onClick={onClick} variant="contained" color="default">
-            Add Event Here
-          </Button>
-        </div>
+        <React.Fragment>
+          <div className="pin1"></div>
+          <div className="infoWindow">
+            <Button className="openButton" size="small" onClick={onClick} variant="contained" color="default">
+              Add Event Here
+            </Button>
+          </div>
+        </React.Fragment>
       )}
+
       <style jsx>{`
         .pin1 {
           position: absolute;
@@ -46,6 +60,10 @@ function ClickMarker({ show, onClick }) {
           margin: -108px 0px 0px -47px;
           border-radius: 5px;
           padding: 5px;
+          z-index: 1;
+        }
+        .openButton {
+          z-index: 1;
         }
       `}</style>
     </React.Fragment>
