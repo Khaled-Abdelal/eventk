@@ -1,13 +1,15 @@
 import React from 'react';
 import fetch from 'isomorphic-unfetch';
+import dynamic from 'next/dynamic';
 import Layout from '../src/Layout';
-import GoogleMap from '../src/Map';
 import { BaseURL } from '../constants';
+
+const Map = dynamic(() => import('../src/Map'), { ssr: false });
 
 export default function Index({ events }) {
   return (
     <Layout>
-      <GoogleMap events={events} />
+      <Map events={events} />
     </Layout>
   );
 }

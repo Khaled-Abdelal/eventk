@@ -14,23 +14,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import moment from 'moment';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
-import dynamic from 'next/dynamic';
 import Box from '@material-ui/core/Box';
 import Zoom from '@material-ui/core/Zoom';
-
-const DateCountdown = dynamic(() => import('react-date-countdown-timer'), { ssr: false });
+import DateCountdown from 'react-date-countdown-timer';
+// import dynamic from 'next/dynamic';
+// const DateCountdown = dynamic(() => import('react-date-countdown-timer'), { ssr: false });
 
 const useStyles = makeStyles(theme => ({
-  avatar: {
-    width: 25,
-    height: 25,
-    cursor: 'pointer',
-    '&:hover': {
-      border: '1px solid #333',
-      marginBottom: '1px',
-    },
-  },
-
   card: {
     maxWidth: 345,
     position: 'absolute',
@@ -61,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Events({ event, cardActiveIndex, handleCardToggle }) {
+function Event({ event, cardActiveIndex }) {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
@@ -71,63 +61,58 @@ function Events({ event, cardActiveIndex, handleCardToggle }) {
   const truncate = str => (str.length > 200 ? `${str.substring(0, 190)}...` : str);
   return (
     <div>
-      <Avatar
-        value={event._id}
-        onClick={handleCardToggle}
-        src={event.cover}
-        alt="event cover"
-        className={classes.avatar}
-      />
-      <Zoom in={cardActiveIndex === event._id}>
-        <Card className={classes.card} onClick={e => e.stopPropagation()}>
-          <CardHeader
-            avatar={<Avatar aria-label="recipe" src={event._user.photo} className={classes.avatar} />}
-            title={event.title}
-            subheader={moment(event.startTime).format('LL')}
-          />
-          <CardMedia className={classes.media} image={event.cover} title="Paella dish" />
-          <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {truncate(event.description)}
-            </Typography>
-          </CardContent>
-          <CardActions disableSpacing>
-            <Typography component="div">
-              <Box textAlign="left" fontSize={10} fontWeight="fontWeightBold" m={1}>
-                {moment() < moment(event.startTime) && (
-                  <div className={classes.startText}>
-                    <DateCountdown dateTo={event.startTime} /> to start
-                  </div>
-                )}
-                {moment() > moment(event.startTime) && moment() < moment(event.endTime) && (
-                  <div className={classes.endText}>
-                    {' '}
-                    <DateCountdown dateTo={event.endTime} /> to end
-                  </div>
-                )}
-                {moment() > moment(event.endTime) && <div className={classes.endText}>event is over</div>}
-              </Box>
-            </Typography>
-            <IconButton
-              className={clsx(classes.expand, {
-                [classes.expandOpen]: expanded,
-              })}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
+      {cardActiveIndex === event._id ? (
+        <Zoom in={cardActiveIndex === event._id}>
+          <Card className={classes.card} onClick={e => e.stopPropagation()}>
+            <CardHeader
+              avatar={<Avatar aria-label="recipe" src={event._user.photo} className={classes.avatar} />}
+              title={event.title}
+              subheader={moment(event.startTime).format('LL')}
+            />
+            <CardMedia className={classes.media} image={event.cover} title="Paella dish" />
             <CardContent>
-              <Typography paragraph>{event.description}</Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {truncate(event.description)}
+              </Typography>
             </CardContent>
-          </Collapse>
-        </Card>
-      </Zoom>
+            <CardActions disableSpacing>
+              <Typography component="div">
+                <Box textAlign="left" fontSize={10} fontWeight="fontWeightBold" m={1}>
+                  {moment() < moment(event.startTime) && (
+                    <div className={classes.startText}>
+                      <DateCountdown dateTo={event.startTime} /> to start
+                    </div>
+                  )}
+                  {moment() > moment(event.startTime) && moment() < moment(event.endTime) && (
+                    <div className={classes.endText}>
+                      {' '}
+                      <DateCountdown dateTo={event.endTime} /> to end
+                    </div>
+                  )}
+                  {moment() > moment(event.endTime) && <div className={classes.endText}>event is over</div>}
+                </Box>
+              </Typography>
+              <IconButton
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: expanded,
+                })}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="show more"
+              >
+                <ExpandMoreIcon />
+              </IconButton>
+            </CardActions>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Typography paragraph>{event.description}</Typography>
+              </CardContent>
+            </Collapse>
+          </Card>
+        </Zoom>
+      ) : null}
     </div>
   );
 }
 
-export default Events;
+export default Event;
