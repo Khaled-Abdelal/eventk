@@ -97,7 +97,7 @@ function Map({ events }) {
           />
         ))}
         <TileLayer
-          url={`https://api.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
+          url={`https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
         />
       </LeafMap>
       <Modal handleClose={handleModalClose} handleOpen={handleModalOpen} open={open}>
