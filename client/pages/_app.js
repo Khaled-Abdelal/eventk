@@ -3,8 +3,15 @@ import App from 'next/app';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { ToastContainer, toast } from 'react-toastify';
 import theme from '../src/theme';
 import { AuthContainer } from '../hooks/useAuth';
+import 'react-toastify/dist/ReactToastify.min.css';
+
+toast.configure({
+  autoClose: 3500,
+  draggable: false,
+});
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -21,6 +28,7 @@ export default class MyApp extends App {
     return (
       <React.Fragment>
         <AuthContainer.Provider>
+          <ToastContainer />
           <Head>
             <title>My page</title>
           </Head>

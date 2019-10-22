@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import moment from 'moment';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
 
 export default function EventForm({ onSubmit }) {
-  console.log('rerender');
   const [selectedStartDate, setSelectedStartDate] = useState(moment());
   const [selectedEndDate, setSelectedEndDate] = useState(moment());
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
   const [coverImage, setCoverImage] = useState(null);
+  const [formError, setFormError] = useState({});
+
   const handleStartDateChange = date => {
     setSelectedStartDate(date);
-    console.log(selectedStartDate);
   };
   const handleEndDateChange = date => {
     setSelectedEndDate(date);
-    console.log(setSelectedEndDate);
   };
   const imageToBase64 = e => {
     const element = e.target;
@@ -31,14 +31,29 @@ export default function EventForm({ onSubmit }) {
     reader.readAsDataURL(file);
   };
   function submitIfValid() {
+    setFormError({});
+    let errors = {};
+    let valid = true;
     if (description === '') {
-      console.log('description is required');
+      errors = { ...errors, description: 'description is required' };
+      valid = false;
     }
     if (title === '') {
-      console.log('title is required');
+      errors = { ...errors, title: 'title is required' };
+      valid = false;
+    }
+    if (moment(selectedStartDate) >= moment(selectedEndDate)) {
+      errors = { ...errors, date: "start time can't be equal or bigger than end time" };
+      valid = false;
     }
     if (coverImage === null) {
-      console.log('image is required');
+      errors = { ...errors, coverImage: 'coverImage is required' };
+      valid = false;
+    }
+
+    if (!valid) {
+      setFormError(errors);
+      return;
     }
     onSubmit({
       cover: coverImage,
@@ -61,13 +76,17 @@ export default function EventForm({ onSubmit }) {
         <Button variant="text" fullWidth component="span">
           Upload Event Cover Image
         </Button>
+        <FormHelperText error={!!formError.coverImage} style={{ marginBottom: '6px' }}>
+          {formError.coverImage}
+        </FormHelperText>
       </label>
       <TextField
         id="outlined-full-width"
         label="Title"
         style={{ margin: 8 }}
         placeholder="Event Title"
-        helperText=""
+        helperText={formError.title}
+        error={!!formError.title}
         fullWidth
         margin="normal"
         variant="outlined"
@@ -84,9 +103,10 @@ export default function EventForm({ onSubmit }) {
         label="Description"
         style={{ margin: 8 }}
         placeholder="Event Description"
+        error={!!formError.description}
         multiline
-        rows={5}
-        helperText=""
+        rows={3}
+        helperText={formError.description}
         fullWidth
         margin="normal"
         variant="outlined"
@@ -152,6 +172,9 @@ export default function EventForm({ onSubmit }) {
           />
         </Grid>
       </MuiPickersUtilsProvider>
+      <FormHelperText error={!!formError.date} style={{ marginBottom: '6px' }}>
+        {formError.date}
+      </FormHelperText>
 
       <Button onClick={submitIfValid} variant="contained" fullWidth color="primary">
         Post New Event

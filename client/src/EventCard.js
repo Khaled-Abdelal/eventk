@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Event({ event, cardActiveIndex }) {
+function EventCard({ event, cardActiveIndex }) {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
 
@@ -115,4 +115,4 @@ function Event({ event, cardActiveIndex }) {
   );
 }
 
-export default Event;
+export default EventCard;

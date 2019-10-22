@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import usePosition from '../hooks/usePosition';
 import io from 'socket.io-client';
-import { Map as LeafMap, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Map as LeafMap, TileLayer, Popup } from 'react-leaflet';
 import { Button } from '@material-ui/core';
-import L from 'leaflet';
+import { toast } from 'react-toastify';
+import { EventMarker } from './EventMarker';
 import Modal from './Modal';
-import Event from './Event';
 import useModal from '../hooks/useModal';
 import EventForm from './EventForm';
 import { BaseURL } from '../constants';
@@ -14,34 +14,13 @@ import AddEventMarker from './AddEventMarker';
 
 function Map({ events }) {
   // const { latitude, longitude, error } = usePosition();
-  const { open, handleClose, handleOpen } = useModal();
+  const { open, handleModalClose, handleModalOpen } = useModal();
   const { user, token } = AuthContainer.useContainer();
   const [stateEvents, setStateEvents] = useState(events);
   const [cardActiveIndex, setCardActiveIndex] = useState('');
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const { current: socket } = useRef(io(BaseURL));
 
-  const myCustomColour = '#583470';
-
-  const markerHtmlStyles = `
-  background-color: ${myCustomColour};
-  width: 2rem;
-  height: 2rem;
-  display: block;
-  left: -.9rem;
-  top: -.9rem;
-  position: relative;
-  border-radius: 2rem 2rem 0;
-  transform: rotate(45deg);
-  border: 1px solid #FFFFFF`;
-
-  const icon = L.divIcon({
-    className: 'my-custom-pin',
-    iconAnchor: [0, 24],
-    labelAnchor: [-6, 0],
-    popupAnchor: [0, -36],
-    html: `<span style="${markerHtmlStyles}" />`,
-  });
   function handleCardToggle(e) {
     setCoords({ lat: null, lng: null });
     setCardActiveIndex('');
@@ -72,15 +51,17 @@ function Map({ events }) {
       try {
         socket.emit('add-new-event', token, { coordinates: [coords.lng, coords.lat], ...data }, error => {
           if (error) {
-            console.log(error);
+            return toast.error(error.message);
           }
-          console.log('event added');
+          toast.success('event added');
+          handleModalClose();
+          setCoords({ lat: null, lng: null });
         });
       } catch (err) {
-        console.log(err);
+        toast.error(err.message);
       }
     } else {
-      console.log('no auth user');
+      toast.error('you need to login first');
     }
   };
 
@@ -100,7 +81,7 @@ function Map({ events }) {
         {coords.lat && coords.lng && cardActiveIndex === '' && (
           <AddEventMarker position={[coords.lat, coords.lng]}>
             <Popup>
-              <Button className="openButton" size="small" onClick={handleOpen} variant="contained" color="default">
+              <Button className="openButton" size="small" onClick={handleModalOpen} variant="contained" color="default">
                 Add Event Here
               </Button>
             </Popup>
@@ -108,22 +89,18 @@ function Map({ events }) {
         )}
 
         {stateEvents.map(event => (
-          <Marker
-            onClick={handleCardToggle}
+          <EventMarker
             key={event._id}
-            position={[event.location.coordinates[1], event.location.coordinates[0]]}
-            icon={icon}
-          >
-            <Popup style={{ padding: 0 }}>
-              <Event event={event} cardActiveIndex={cardActiveIndex} handleCardToggle={handleCardToggle} />
-            </Popup>
-          </Marker>
+            handleCardToggle={handleCardToggle}
+            event={event}
+            cardActiveIndex={cardActiveIndex}
+          />
         ))}
         <TileLayer
-          url={`https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
+          url={`https://api.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
         />
       </LeafMap>
-      <Modal handleClose={handleClose} handleOpen={handleOpen} open={open}>
+      <Modal handleClose={handleModalClose} handleOpen={handleModalOpen} open={open}>
         <EventForm onSubmit={uploadEvent} />
       </Modal>
       <style jsx global>{`

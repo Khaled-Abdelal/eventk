@@ -9,12 +9,12 @@ module.exports = function(io) {
         const decoded = await jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.id);
         if (!user) {
-          return cb('no user found');
+          return cb({ message: 'no user found' });
         }
 
         const { coordinates, cover, description, title, startTime, endTime } = data;
         if (startTime >= endTime) {
-          return cb('error start date cant be bigger or equall to end date');
+          return cb({ message: 'error start date cant be bigger or equall to end date' });
         }
 
         const newEvent = await new Event({
