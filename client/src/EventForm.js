@@ -20,7 +20,13 @@ const useStyles = makeStyles(() => ({
     fontSize: '1.1rem',
   },
   notLoggedIn: { background: red[500], color: '#fff', borderRadius: '5px', padding: '5px', marginTop: '5px' },
-  submit: { backgroundColor: '#57366F', color: '#fff' },
+  submit: {
+    backgroundColor: '#57366F',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#452b58',
+    },
+  },
 }));
 
 export default function EventForm({ onSubmit, handleClose }) {
