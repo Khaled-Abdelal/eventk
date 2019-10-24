@@ -2,19 +2,41 @@ import React, { useState, useEffect, useRef } from 'react';
 // import usePosition from '../hooks/usePosition';
 import io from 'socket.io-client';
 import { Map as LeafMap, TileLayer, Popup } from 'react-leaflet';
-import { Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import Fab from '@material-ui/core/Fab';
+import Settings from '@material-ui/icons/Settings';
 import { toast } from 'react-toastify';
+import { setCookie } from 'nookies';
 import { EventMarker } from './EventMarker';
 import Modal from './Modal';
 import useModal from '../hooks/useModal';
 import EventForm from './EventForm';
+import MapSettings from './Settings';
 import { BaseURL } from '../constants';
 import { AuthContainer } from '../hooks/useAuth';
 import AddEventMarker from './AddEventMarker';
 
-function Map({ events }) {
+const useStyles = makeStyles(() => ({
+  fab: {
+    zIndex: 999,
+    position: 'absolute',
+    bottom: '15px',
+    right: '15px',
+    backgroundColor: '#57366F',
+    '&:hover': {
+      backgroundColor: '#3e2750',
+    },
+  },
+}));
+
+function Map({ events, initialMapTheme }) {
   // const { latitude, longitude, error } = usePosition();
-  const { open, handleModalClose, handleModalOpen } = useModal();
+  console.log(initialMapTheme);
+  const classes = useStyles();
+  const [open, eventFormModalClose, eventFormModalOpen] = useModal();
+  const [openSettingsState, settingsModalClose, settingsModalOpen] = useModal();
+  const [mapTheme, setMapTheme] = useState(() => initialMapTheme || 'light');
   const { user, token } = AuthContainer.useContainer();
   const [stateEvents, setStateEvents] = useState(events);
   const [cardActiveIndex, setCardActiveIndex] = useState('');
@@ -27,6 +49,10 @@ function Map({ events }) {
     if (cardActiveIndex === e.target._popup.options.children.props.event._id) return;
     setCardActiveIndex(e.target._popup.options.children.props.event._id);
   }
+  useEffect(() => {
+    setCookie({}, 'mapTheme', mapTheme);
+  }, [mapTheme]);
+
   useEffect(() => {
     try {
       socket.open();
@@ -54,7 +80,7 @@ function Map({ events }) {
             return toast.error(error.message);
           }
           toast.success('event added');
-          handleModalClose();
+          eventFormModalClose();
           setCoords({ lat: null, lng: null });
         });
       } catch (err) {
@@ -65,6 +91,10 @@ function Map({ events }) {
     }
   };
 
+  function toggleSettingsModal(e) {
+    e.stopPropagation();
+    settingsModalOpen(e);
+  }
   const mapClicked = e => {
     setCardActiveIndex('');
     const { lat, lng } = e.latlng;
@@ -72,6 +102,9 @@ function Map({ events }) {
   };
   return (
     <React.Fragment>
+      <Fab color="secondary" aria-label="edit" className={classes.fab} onClick={toggleSettingsModal}>
+        <Settings />
+      </Fab>
       <LeafMap
         style={{ width: '100vw', height: 'calc(100vh - 65px)' }}
         zoom={6}
@@ -81,7 +114,13 @@ function Map({ events }) {
         {coords.lat && coords.lng && cardActiveIndex === '' && (
           <AddEventMarker position={[coords.lat, coords.lng]}>
             <Popup>
-              <Button className="openButton" size="small" onClick={handleModalOpen} variant="contained" color="default">
+              <Button
+                className="openButton"
+                size="small"
+                onClick={eventFormModalOpen}
+                variant="contained"
+                color="default"
+              >
                 Add Event Here
               </Button>
             </Popup>
@@ -97,11 +136,14 @@ function Map({ events }) {
           />
         ))}
         <TileLayer
-          url={`https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
+          url={`https://api.mapbox.com/v4/mapbox.${mapTheme}/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
         />
       </LeafMap>
-      <Modal handleClose={handleModalClose} handleOpen={handleModalOpen} open={open}>
-        <EventForm onSubmit={uploadEvent} />
+      <Modal handleClose={eventFormModalClose} handleOpen={eventFormModalOpen} open={open}>
+        <EventForm handleClose={eventFormModalClose} onSubmit={uploadEvent} />
+      </Modal>
+      <Modal handleClose={settingsModalClose} handleOpen={settingsModalOpen} open={openSettingsState}>
+        <MapSettings handleClose={settingsModalClose} mapTheme={mapTheme} setMapTheme={setMapTheme} />
       </Modal>
       <style jsx global>{`
         .leaflet-popup-content-wrapper {

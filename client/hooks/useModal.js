@@ -12,7 +12,7 @@ function useModal() {
     setOpen(false);
   };
 
-  return { open, handleModalClose, handleModalOpen };
+  return [open, handleModalClose, handleModalOpen];
 }
 
 export default useModal;

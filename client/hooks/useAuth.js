@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
+import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import Axios from '../axios/axios';
 
 function useAuth() {
@@ -17,46 +18,35 @@ function useAuth() {
         });
         setUser(foundUser.data.user);
         setToken(foundUser.data.token);
-        localStorage.setItem('auth-token', foundUser.data.token);
+        setCookie({}, 'token', foundUser.data.token, {
+          maxAge: 30 * 24 * 60 * 60,
+        });
         setLoading(false);
       } catch (err) {
-        setUser(null);
+        setUser(false);
         setError(err);
         setLoading(false);
         setToken(null);
-        localStorage.removeItem('auth-token');
       }
     }
   }
 
   function logout() {
-    localStorage.removeItem('auth-token');
+    // localStorage.removeItem('auth-token');
+    destroyCookie({}, 'token');
     window.location.reload();
   }
-  async function loadUser() {
-    const storedToken = localStorage.getItem('auth-token');
-    if (!storedToken) {
-      setUser(null);
-      setToken(null);
-      return;
+  async function loadUser(loadedUser) {
+    if (loadedUser && loadedUser._id) {
+      const loadedToken = parseCookies().token;
+      setToken(loadedToken);
+      return setUser(loadedUser);
     }
-    try {
-      setLoading(true);
-      // const header = `Authorization: Bearer ${token}`;
-
-      const foundUser = await Axios.get('api/user/auth/me', { headers: { Authorization: `Bearer ${storedToken}` } });
-      setLoading(false);
-      setUser(foundUser.data);
-      setToken(storedToken);
-    } catch (err) {
-      setLoading(false);
-      setUser(null);
-      setError(err);
-    }
+    setUser(false);
   }
-  useEffect(() => {
-    loadUser();
-  }, []);
+  // useEffect(() => {
+  //   loadUser();
+  // }, []);
   return { loginFacebook, logout, loadUser, loading, error, token, user };
 }
 

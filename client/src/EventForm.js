@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -6,14 +7,31 @@ import moment from 'moment';
 import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { red } from '@material-ui/core/colors';
+import { AuthContainer } from '../hooks/useAuth';
 
-export default function EventForm({ onSubmit }) {
+const useStyles = makeStyles(() => ({
+  exit: {
+    position: 'absolute',
+    top: '25px',
+    right: '20px',
+    cursor: 'pointer',
+    fontSize: '1.1rem',
+  },
+  notLoggedIn: { background: red[500], color: '#fff', borderRadius: '5px', padding: '5px', marginTop: '5px' },
+  submit: { backgroundColor: '#57366F', color: '#fff' },
+}));
+
+export default function EventForm({ onSubmit, handleClose }) {
+  const classes = useStyles();
   const [selectedStartDate, setSelectedStartDate] = useState(moment());
   const [selectedEndDate, setSelectedEndDate] = useState(moment());
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
   const [coverImage, setCoverImage] = useState(null);
   const [formError, setFormError] = useState({});
+  const { user } = AuthContainer.useContainer();
 
   const handleStartDateChange = date => {
     setSelectedStartDate(date);
@@ -65,6 +83,14 @@ export default function EventForm({ onSubmit }) {
   }
   return (
     <React.Fragment>
+      <div tabIndex={0} role="button" onKeyDown={handleClose} onClick={handleClose} className={classes.exit}>
+        x
+      </div>
+      {!user && !user._id ? (
+        <Typography className={classes.notLoggedIn} component="p">
+          you need to be logged in to create an event.
+        </Typography>
+      ) : null}
       <label htmlFor="raised-button-file">
         <input
           accept="image/*"
@@ -176,7 +202,13 @@ export default function EventForm({ onSubmit }) {
         {formError.date}
       </FormHelperText>
 
-      <Button onClick={submitIfValid} variant="contained" fullWidth color="primary">
+      <Button
+        onClick={submitIfValid}
+        variant="contained"
+        fullWidth
+        className={classes.submit}
+        disabled={!user && !user._id}
+      >
         Post New Event
       </Button>
     </React.Fragment>
