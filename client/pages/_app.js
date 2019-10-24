@@ -30,7 +30,8 @@ export default class MyApp extends App {
         <AuthContainer.Provider>
           <ToastContainer />
           <Head>
-            <title>My page</title>
+            <title>Eventk</title>
+            <link rel="shortcut icon" href="/eventk.ico" />
           </Head>
           <ThemeProvider theme={theme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}

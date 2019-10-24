@@ -3,6 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
@@ -13,35 +16,81 @@ export default function Nav() {
   // eslint-disable-next-line no-use-before-define
   const classes = useStyles();
   const { loginFacebook, logout, user } = AuthContainer.useContainer();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
+  const handleMenu = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  function renderUserState() {
+    switch (user) {
+      case null:
+        return <p>loading...</p>;
+      case false:
+        return (
+          <FacebookLogin
+            appId="934603710237663"
+            autoLoad={false}
+            callback={loginFacebook}
+            render={renderProps => (
+              <Button className={classes.facebookButton} type="button" onClick={renderProps.onClick}>
+                Login with Facebook
+              </Button>
+            )}
+          />
+        );
+      default:
+        return (
+          <div>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={logout}>Logout</MenuItem>
+            </Menu>
+          </div>
+        );
+    }
+  }
   return (
     <div className={classes.root}>
       <AppBar position="sticky" className={classes.Nav}>
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+          {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
           <div style={{ flexGrow: 1, display: 'flex' }}>
             <Link href="/" className={classes.title}>
-              <Button className={classes.title}>Home</Button>
+              {/* <Button className={classes.title}>Home</Button> */}
+              <img src="/eventk" className={classes.logo} alt="eventk logo" />
             </Link>
           </div>
-          {user ? (
-            <button type="button" onClick={logout}>
-              {user.name}
-            </button>
-          ) : (
-            <FacebookLogin
-              appId="934603710237663"
-              autoLoad={false}
-              callback={loginFacebook}
-              render={renderProps => (
-                <Button className={classes.facebookButton} type="button" onClick={renderProps.onClick}>
-                  Login with Facebook
-                </Button>
-              )}
-            />
-          )}
+          {renderUserState()}
         </Toolbar>
       </AppBar>
     </div>
@@ -77,6 +126,10 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       opacity: 1,
       backgroundColor: '#3b5998',
+      fontWeight: 'bold',
     },
+  },
+  logo: {
+    width: '6rem',
   },
 }));

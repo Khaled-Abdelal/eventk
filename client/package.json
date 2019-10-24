@@ -21,6 +21,7 @@
     "moment": "^2.24.0",
     "moment-countdown": "0.0.3",
     "next": "latest",
+    "nookies": "^2.0.8",
     "prop-types": "latest",
     "react": "latest",
     "react-date-countdown-timer": "^1.0.3",
