@@ -96,7 +96,6 @@ const useStyles = makeStyles(theme => ({
   },
   Nav: {
     backgroundColor: '#424242',
-    flexGrow: 1,
     position: 'static',
   },
   title: {

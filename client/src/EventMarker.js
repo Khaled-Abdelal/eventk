@@ -47,13 +47,13 @@ export function EventMarker({ handleCardToggle, event, cardActiveIndex }) {
       key={event._id}
       position={[event.location.coordinates[1], event.location.coordinates[0]]}
       icon={iconPerson}
-      dragable
       style={{ border: `3px solid ${markerColor}` }}
     >
       <Popup
         style={{
           padding: 0,
         }}
+        autoPan
       >
         <EventCard event={event} cardActiveIndex={cardActiveIndex} handleCardToggle={handleCardToggle} />
       </Popup>

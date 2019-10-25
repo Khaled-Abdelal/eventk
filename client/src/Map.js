@@ -32,7 +32,6 @@ const useStyles = makeStyles(() => ({
 
 function Map({ events, initialMapTheme }) {
   // const { latitude, longitude, error } = usePosition();
-  console.log(initialMapTheme);
   const classes = useStyles();
   const [open, eventFormModalClose, eventFormModalOpen] = useModal();
   const [openSettingsState, settingsModalClose, settingsModalOpen] = useModal();
@@ -49,6 +48,7 @@ function Map({ events, initialMapTheme }) {
     if (cardActiveIndex === e.target._popup.options.children.props.event._id) return;
     setCardActiveIndex(e.target._popup.options.children.props.event._id);
   }
+
   useEffect(() => {
     setCookie({}, 'mapTheme', mapTheme);
   }, [mapTheme]);
@@ -105,12 +105,7 @@ function Map({ events, initialMapTheme }) {
       <Fab color="secondary" aria-label="edit" className={classes.fab} onClick={toggleSettingsModal}>
         <Settings />
       </Fab>
-      <LeafMap
-        style={{ width: '100vw', height: 'calc(100vh - 65px)' }}
-        zoom={6}
-        center={[29.924526, 31.205753]}
-        onClick={mapClicked}
-      >
+      <LeafMap style={{ width: '100vw', flexGrow: 1 }} zoom={6} center={[29.924526, 31.205753]} onClick={mapClicked}>
         {coords.lat && coords.lng && cardActiveIndex === '' && (
           <AddEventMarker position={[coords.lat, coords.lng]}>
             <Popup>
