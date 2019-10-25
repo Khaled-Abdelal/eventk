@@ -106,7 +106,7 @@ function Map({ events, initialMapTheme }) {
         <Settings />
       </Fab>
       <LeafMap
-        style={{ width: '100vw', height: 'calc(100vh - 65px)' }}
+        style={{ width: '100vw', height: 'calc(100vh - 65px)', marginTop: '65px' }}
         zoom={6}
         center={[29.924526, 31.205753]}
         onClick={mapClicked}
