@@ -77,35 +77,27 @@ export default function Nav() {
     }
   }
   return (
-    <div className={classes.root}>
-      <AppBar position="fixed" className={classes.Nav}>
-        <Toolbar>
-          {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton> */}
-          <div style={{ flexGrow: 1, display: 'flex' }}>
-            <Link href="/" className={classes.title}>
-              {/* <Button className={classes.title}>Home</Button> */}
-              <img src="/eventk" className={classes.logo} alt="eventk logo" />
-            </Link>
-          </div>
-          {renderUserState()}
-        </Toolbar>
-      </AppBar>
-    </div>
+    <AppBar position="static" className={classes.Nav}>
+      <Toolbar>
+        <div style={{ flexGrow: 1, display: 'flex' }}>
+          <Link href="/" className={classes.title}>
+            <img src="/eventk" className={classes.logo} alt="eventk logo" />
+          </Link>
+        </div>
+        {renderUserState()}
+      </Toolbar>
+    </AppBar>
   );
 }
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    position: 'fixed',
-  },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   Nav: {
     backgroundColor: '#424242',
+    flexGrow: 1,
+    position: 'static',
   },
   title: {
     color: '#fff',
