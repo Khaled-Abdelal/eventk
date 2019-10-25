@@ -78,7 +78,7 @@ export default function Nav() {
   }
   return (
     <div className={classes.root}>
-      <AppBar position="sticky" className={classes.Nav}>
+      <AppBar position="fixed" className={classes.Nav}>
         <Toolbar>
           {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <MenuIcon />
@@ -99,8 +99,9 @@ export default function Nav() {
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    position: 'sticky',
+    position: 'fixed',
     zIndex: 99999999,
+    marginBottom: '65px',
   },
   menuButton: {
     marginRight: theme.spacing(2),
