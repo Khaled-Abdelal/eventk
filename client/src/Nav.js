@@ -109,6 +109,7 @@ const useStyles = makeStyles(theme => ({
   Nav: {
     backgroundColor: '#424242',
     position: 'sticky',
+    zIndex: 999999999,
   },
   title: {
     color: '#fff',
