@@ -8,6 +8,7 @@ import Fab from '@material-ui/core/Fab';
 import Settings from '@material-ui/icons/Settings';
 import { toast } from 'react-toastify';
 import { setCookie } from 'nookies';
+import L from 'leaflet';
 import { EventMarker } from './EventMarker';
 import Modal from './Modal';
 import useModal from '../hooks/useModal';
@@ -71,7 +72,12 @@ function Map({ events, initialMapTheme }) {
       socket.close();
     };
   }, [events, socket]);
-
+  useEffect(() => {
+    // fixes a leaflet bug that make the map bigger on zoom change
+    L.Control.include({
+      _refocusOnMap: L.Util.falseFn, // Do nothing.
+    });
+  }, []);
   const uploadEvent = data => {
     if (user && token) {
       try {
