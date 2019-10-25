@@ -7,7 +7,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { AuthContainer } from '../hooks/useAuth';
 import Link from './Link';
@@ -101,15 +100,13 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     position: 'sticky',
-    zIndex: 999,
+    zIndex: 99999999,
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   Nav: {
     backgroundColor: '#424242',
-    position: 'sticky',
-    zIndex: 999999999,
   },
   title: {
     color: '#fff',
