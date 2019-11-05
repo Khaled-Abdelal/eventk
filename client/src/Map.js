@@ -42,7 +42,7 @@ function Map({ events, initialMapTheme }) {
   const [cardActiveIndex, setCardActiveIndex] = useState('');
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const { current: socket } = useRef(io(BaseURL));
-
+  console.log('global', stateEvents);
   function handleCardToggle(e) {
     setCoords({ lat: null, lng: null });
     setCardActiveIndex('');
@@ -61,7 +61,7 @@ function Map({ events, initialMapTheme }) {
         console.log('client connected');
       });
       socket.on('new-event', function(newEvent) {
-        setStateEvents([...events, newEvent]);
+        setStateEvents([...stateEvents, newEvent]);
       });
     } catch (err) {
       console.log(err);
@@ -71,7 +71,7 @@ function Map({ events, initialMapTheme }) {
     return () => {
       socket.close();
     };
-  }, [events, socket]);
+  }, [socket, stateEvents]);
   // useEffect(() => {
   //   // fixes a leaflet bug that make the map bigger on zoom change
   //   L.Control.include({
@@ -81,6 +81,7 @@ function Map({ events, initialMapTheme }) {
   const uploadEvent = data => {
     if (user && token) {
       try {
+        toast.info('event loading ...');
         socket.emit('add-new-event', token, { coordinates: [coords.lng, coords.lat], ...data }, error => {
           if (error) {
             return toast.error(error.message);
@@ -113,7 +114,7 @@ function Map({ events, initialMapTheme }) {
       </Fab>
       <LeafMap
         style={{ width: '100vw', height: 'calc(100% - 65px )', position: 'fixed', bottom: 0 }}
-        zoom={6}
+        zoom={2}
         center={[29.924526, 31.205753]}
         onClick={mapClicked}
       >
