@@ -8,11 +8,13 @@
     "@material-ui/icons": "^4.4.3",
     "@material-ui/pickers": "^3.2.6",
     "@material-ui/styles": "latest",
+    "@next/bundle-analyzer": "^9.0.7",
     "@zeit/next-css": "^1.0.1",
     "axios": "^0.19.0",
     "client-oauth2": "^4.2.5",
     "clsx": "^1.0.4",
     "countdown": "^2.6.0",
+    "cross-env": "^5.2.0",
     "dotenv": "^8.2.0",
     "dotenv-webpack": "^1.7.0",
     "google-map-react": "^1.1.5",
@@ -20,6 +22,7 @@
     "leaflet": "^1.5.1",
     "moment": "^2.24.0",
     "moment-countdown": "0.0.3",
+    "moment-locales-webpack-plugin": "^1.1.0",
     "next": "latest",
     "nookies": "^2.0.8",
     "prop-types": "latest",
@@ -36,6 +39,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start -p $PORT",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run build",
+    "analyze": "cross-env ANALYZE=true next build"
   }
 }

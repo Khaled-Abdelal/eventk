@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import moment from 'moment';
-import EventCard from './EventCard';
+import dynamic from 'next/dynamic';
+
+const EventCard = dynamic(() => import('./EventCard'));
 
 export function EventMarker({ handleCardToggle, event, cardActiveIndex }) {
   const [markerColor, setMarkerColor] = useState();

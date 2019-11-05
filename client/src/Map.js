@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import usePosition from '../hooks/usePosition';
+import dynamic from 'next/dynamic';
 import io from 'socket.io-client';
 import { Map as LeafMap, TileLayer, Popup } from 'react-leaflet';
 import Button from '@material-ui/core/Button';
@@ -10,13 +11,14 @@ import { toast } from 'react-toastify';
 import { setCookie } from 'nookies';
 // import L from 'leaflet';
 import { EventMarker } from './EventMarker';
-import Modal from './Modal';
 import useModal from '../hooks/useModal';
-import EventForm from './EventForm';
 import MapSettings from './Settings';
 import { BaseURL } from '../constants';
 import { AuthContainer } from '../hooks/useAuth';
 import AddEventMarker from './AddEventMarker';
+
+const Modal = dynamic(() => import('./Modal'));
+const EventForm = dynamic(() => import('./EventForm'));
 
 const useStyles = makeStyles(() => ({
   fab: {
