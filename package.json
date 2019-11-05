@@ -31,5 +31,7 @@
     "nodemon": "^1.19.3",
     "prettier": "^1.18.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "sharp": "^0.23.2"
+  }
 }

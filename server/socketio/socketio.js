@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Event = require('../models/Event');
+const optimizeImage = require('../utils/imageOptimize');
 
 module.exports = function(io) {
   io.on('connection', function(socket) {
@@ -16,11 +17,11 @@ module.exports = function(io) {
         if (startTime >= endTime) {
           return cb({ message: 'error start date cant be bigger or equall to end date' });
         }
-
+        const optimizedCover = await optimizeImage(cover);
         const newEvent = await new Event({
           _user: user._id,
           location: { coordinates },
-          cover,
+          cover: optimizedCover,
           startTime,
           endTime,
           description,

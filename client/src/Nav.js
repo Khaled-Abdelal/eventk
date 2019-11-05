@@ -40,7 +40,7 @@ export default function Nav() {
       case false:
         return (
           <FacebookLogin
-            appId="934603710237663"
+            appId={process.env.NODE_ENV === 'production' ? '934603710237663' : '755826851599388'}
             autoLoad={false}
             callback={loginFacebook}
             render={renderProps => (

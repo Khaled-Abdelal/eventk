@@ -8,7 +8,7 @@ const app = express();
 const server = http.Server(app);
 const io = require('socket.io')(server);
 
-require('dotenv').config();
+require('dotenv-flow').config();
 require('./config/passport');
 
 const PORT = process.env.PORT || 5000;

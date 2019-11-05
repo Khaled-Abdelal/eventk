@@ -42,7 +42,7 @@ function Map({ events, initialMapTheme }) {
   const [cardActiveIndex, setCardActiveIndex] = useState('');
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const { current: socket } = useRef(io(BaseURL));
-  console.log('global', stateEvents);
+
   function handleCardToggle(e) {
     setCoords({ lat: null, lng: null });
     setCardActiveIndex('');
