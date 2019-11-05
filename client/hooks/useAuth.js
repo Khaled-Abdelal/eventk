@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createContainer } from 'unstated-next';
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import Axios from '../axios/axios';

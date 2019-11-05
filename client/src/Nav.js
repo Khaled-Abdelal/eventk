@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import { toast } from 'react-toastify';
 import IconButton from '@material-ui/core/IconButton';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { AuthContainer } from '../hooks/useAuth';
@@ -14,7 +15,7 @@ import Link from './Link';
 export default function Nav() {
   // eslint-disable-next-line no-use-before-define
   const classes = useStyles();
-  const { loginFacebook, logout, user } = AuthContainer.useContainer();
+  const { loginFacebook, logout, user, loading } = AuthContainer.useContainer();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -25,6 +26,12 @@ export default function Nav() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    if (loading) {
+      toast.info('loging in...');
+    }
+  }, [loading]);
 
   function renderUserState() {
     switch (user) {
