@@ -31,7 +31,7 @@ Index.getInitialProps = async function(ctx) {
     const { token, mapTheme } = parseCookies(ctx);
 
     const [eventData, userData] = await Promise.all([
-      fetch(`${BaseURL}api/event`).then(r => r.json()),
+      fetch(`${BaseURL}api/event/avatardata`).then(r => r.json()),
       fetch(`${BaseURL}api/user/auth/me`, {
         method: 'GET',
         headers: {

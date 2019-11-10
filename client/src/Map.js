@@ -48,8 +48,8 @@ function Map({ events, initialMapTheme }) {
   function handleCardToggle(e) {
     setCoords({ lat: null, lng: null });
     setCardActiveIndex('');
-    if (cardActiveIndex === e.target._popup.options.children.props.event._id) return;
-    setCardActiveIndex(e.target._popup.options.children.props.event._id);
+    if (cardActiveIndex === e.target._popup.options.children.props.eventId) return;
+    setCardActiveIndex(e.target._popup.options.children.props.eventId);
   }
 
   useEffect(() => {
@@ -68,18 +68,13 @@ function Map({ events, initialMapTheme }) {
     } catch (err) {
       console.log(err);
     }
-
-    // Return a callback to be run before unmount-ing.
     return () => {
       socket.close();
     };
-  }, [socket, stateEvents]);
-  // useEffect(() => {
-  //   // fixes a leaflet bug that make the map bigger on zoom change
-  //   L.Control.include({
-  //     _refocusOnMap: L.Util.falseFn, // Do nothing.
-  //   });
-  // }, []);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
   const uploadEvent = data => {
     if (user && token) {
       try {
