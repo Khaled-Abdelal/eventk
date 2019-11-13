@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
     width: 400,
     maxWidth: '95vw',
     maxHeight: '90vh',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],

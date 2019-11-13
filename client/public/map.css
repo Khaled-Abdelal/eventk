@@ -1,160 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
-// import usePosition from '../hooks/usePosition';
-import dynamic from 'next/dynamic';
-import io from 'socket.io-client';
-import { Map as LeafMap, TileLayer, Popup } from 'react-leaflet';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import Fab from '@material-ui/core/Fab';
-import Settings from '@material-ui/icons/Settings';
-import { toast } from 'react-toastify';
-import { setCookie } from 'nookies';
-// import L from 'leaflet';
-import { EventMarker } from './EventMarker';
-import useModal from '../hooks/useModal';
-import MapSettings from './Settings';
-import { BaseURL } from '../constants';
-import { AuthContainer } from '../hooks/useAuth';
-import AddEventMarker from './AddEventMarker';
-// import "leaflet/dist/leflet.css";
-const Modal = dynamic(() => import('./Modal'));
-const EventForm = dynamic(() => import('./EventForm'));
-
-const useStyles = makeStyles(() => ({
-  fab: {
-    zIndex: 999,
-    position: 'absolute',
-    bottom: '15px',
-    right: '15px',
-    backgroundColor: '#57366F',
-    '&:hover': {
-      backgroundColor: '#3e2750',
-    },
-  },
-}));
-
-function Map({ events, initialMapTheme }) {
-  // const { latitude, longitude, error } = usePosition();
-  const classes = useStyles();
-  const [open, eventFormModalClose, eventFormModalOpen] = useModal();
-  const [openSettingsState, settingsModalClose, settingsModalOpen] = useModal();
-  const [mapTheme, setMapTheme] = useState(() => initialMapTheme || 'light');
-  const { user, token } = AuthContainer.useContainer();
-  const [stateEvents, setStateEvents] = useState(events);
-  const [cardActiveIndex, setCardActiveIndex] = useState('');
-  const [coords, setCoords] = useState({ lat: null, lng: null });
-  const { current: socket } = useRef(io(BaseURL));
-
-  function handleCardToggle(e) {
-    setCoords({ lat: null, lng: null });
-    setCardActiveIndex('');
-    if (cardActiveIndex === e.target._popup.options.children.props.eventId) return;
-    setCardActiveIndex(e.target._popup.options.children.props.eventId);
-  }
-
-  useEffect(() => {
-    setCookie({}, 'mapTheme', mapTheme);
-  }, [mapTheme]);
-
-  useEffect(() => {
-    try {
-      socket.open();
-      socket.on('connect', function() {
-        console.log('client connected');
-      });
-      socket.on('new-event', function(newEvent) {
-        setStateEvents([...stateEvents, newEvent]);
-      });
-    } catch (err) {
-      console.log(err);
-    }
-    return () => {
-      socket.close();
-    };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket]);
-
-  const uploadEvent = data => {
-    if (user && token) {
-      try {
-        toast.info('event loading ...');
-        socket.emit('add-new-event', token, { coordinates: [coords.lng, coords.lat], ...data }, error => {
-          if (error) {
-            return toast.error(error.message);
-          }
-          toast.success('event added');
-          eventFormModalClose();
-          setCoords({ lat: null, lng: null });
-        });
-      } catch (err) {
-        toast.error(err.message);
-      }
-    } else {
-      toast.error('you need to login first');
-    }
-  };
-
-  function toggleSettingsModal(e) {
-    e.stopPropagation();
-    settingsModalOpen(e);
-  }
-  const mapClicked = e => {
-    if (cardActiveIndex !== '') return setCardActiveIndex('');
-    const { lat, lng } = e.latlng;
-    setCoords({ lat, lng });
-  };
-  return (
-    <React.Fragment>
-      <Fab color="secondary" aria-label="edit" className={classes.fab} onClick={toggleSettingsModal}>
-        <Settings />
-      </Fab>
-      <LeafMap
-        style={{
-          width: '100vw',
-          height: 'calc(100% - 65px )',
-          position: 'fixed',
-          bottom: 0,
-        }}
-        zoom={2}
-        center={[29.924526, 31.205753]}
-        onClick={mapClicked}
-      >
-        {coords.lat && coords.lng && cardActiveIndex === '' && (
-          <AddEventMarker position={[coords.lat, coords.lng]}>
-            <Popup>
-              <Button
-                className="openButton"
-                size="small"
-                onClick={eventFormModalOpen}
-                variant="contained"
-                color="default"
-              >
-                Add Event Here
-              </Button>
-            </Popup>
-          </AddEventMarker>
-        )}
-
-        {stateEvents.map(event => (
-          <EventMarker
-            key={event._id}
-            handleCardToggle={handleCardToggle}
-            event={event}
-            cardActiveIndex={cardActiveIndex}
-          />
-        ))}
-        <TileLayer
-          url={`https://api.mapbox.com/v4/mapbox.${mapTheme}/{z}/{x}/{y}.jpg90?access_token=${process.env.MAPBOX_API_KEY}`}
-        />
-      </LeafMap>
-      <Modal handleClose={eventFormModalClose} handleOpen={eventFormModalOpen} open={open}>
-        <EventForm handleClose={eventFormModalClose} onSubmit={uploadEvent} />
-      </Modal>
-      <Modal handleClose={settingsModalClose} handleOpen={settingsModalOpen} open={openSettingsState}>
-        <MapSettings handleClose={settingsModalClose} mapTheme={mapTheme} setMapTheme={setMapTheme} />
-      </Modal>
-      <style jsx global>{`
         .leaflet-pane,
         .leaflet-tile,
         .leaflet-marker-icon,
@@ -358,7 +201,8 @@ function Map({ events, initialMapTheme }) {
           will-change: transform;
         }
         .leaflet-zoom-anim .leaflet-zoom-animated {
-          -webkit-transition: -webkit-transform 0.25s cubic-bezier(0, 0, 0.25, 1);
+          -webkit-transition: -webkit-transform 0.25s
+            cubic-bezier(0, 0, 0.25, 1);
           -moz-transition: -moz-transform 0.25s cubic-bezier(0, 0, 0.25, 1);
           transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
         }
@@ -436,7 +280,7 @@ function Map({ events, initialMapTheme }) {
 
         /* general typography */
         .leaflet-container {
-          font: 12px/1.5 'Helvetica Neue', Arial, Helvetica, sans-serif;
+          font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
         }
 
         /* general toolbar styles */
@@ -499,7 +343,7 @@ function Map({ events, initialMapTheme }) {
 
         .leaflet-control-zoom-in,
         .leaflet-control-zoom-out {
-          font: bold 18px 'Lucida Console', Monaco, monospace;
+          font: bold 18px "Lucida Console", Monaco, monospace;
           text-indent: 1px;
         }
 
@@ -704,7 +548,7 @@ function Map({ events, initialMapTheme }) {
           width: 24px;
           margin: 0 auto;
 
-          -ms-filter: 'progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)';
+          -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
           filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
         }
         .leaflet-oldie .leaflet-popup-tip-container {
@@ -754,7 +598,7 @@ function Map({ events, initialMapTheme }) {
           pointer-events: none;
           border: 6px solid transparent;
           background: transparent;
-          content: '';
+          content: "";
         }
 
         /* Directions */
@@ -806,9 +650,4 @@ function Map({ events, initialMapTheme }) {
         .leaflet-popup-content-wrapper {
           padding: 0px;
         }
-      `}</style>
-    </React.Fragment>
-  );
-}
 
-export default Map;
