@@ -17,16 +17,20 @@ module.exports = function(io) {
         if (startTime >= endTime) {
           return cb({ message: 'error start date cant be bigger or equall to end date' });
         }
-        const optimizedCover = await optimizeImage(cover);
+        const { cover: optimizedCover, avatarCover } = await optimizeImage(cover);
+        console.log(optimizedCover, avatarCover);
+
         const newEvent = await new Event({
           _user: user._id,
           location: { coordinates },
           cover: optimizedCover,
+          avatarCover,
           startTime,
           endTime,
           description,
           title,
         }).save();
+
         cb();
         io.emit('new-event', newEvent);
       } catch (err) {

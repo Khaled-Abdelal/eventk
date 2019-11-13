@@ -36,8 +36,8 @@ export function EventMarker({ handleCardToggle, event, cardActiveIndex }) {
   // });
 
   const iconPerson = new L.Icon({
-    iconUrl: `${BaseURL}images/${event.cover}`,
-    iconRetinaUrl: `${BaseURL}images/${event.cover}`,
+    iconUrl: `${BaseURL}images/${event.avatarCover}`,
+    iconRetinaUrl: `${BaseURL}images/${event.avatarCover}`,
     iconAnchor: [32, 64],
     shadowUrl: null,
     shadowSize: null,

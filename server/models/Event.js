@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 
 const eventSchema = new Schema({
   cover: { type: String, required: true },
+  avatarCover: { type: String, required: true },
   description: { type: String, maxlength: 1024, required: true },
   title: { type: String, maxlength: 255, required: true },
   _user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
