@@ -10,7 +10,7 @@
     "@material-ui/styles": "latest",
     "@next/bundle-analyzer": "^9.0.7",
     "@zeit/next-css": "^1.0.1",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "client-oauth2": "^4.2.5",
     "clsx": "^1.0.4",
     "countdown": "^2.6.0",
